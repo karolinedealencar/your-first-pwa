@@ -34,7 +34,7 @@ self.addEventListener('activate', function(e) {
     e.waitUntil(
         caches.keys().then(function(keyList) {
         return Promise.all(keyList.map(function(key) {
-            if (key !== cacheName) {
+            if (key !== cacheName && key !== dataCacheName) {
             console.log('[ServiceWorker] Removing old cache', key);
             return caches.delete(key);
             }
@@ -45,10 +45,12 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
-    console.log('[ServiceWorker] Fetch', e.request.url);
-    e.respondWith(
-      caches.match(e.request).then(function(response) {
-        return response || fetch(e.request);
-      })
-    );
-  });
+  console.log('[ServiceWorker] Fetch', e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      return response || fetch(e.request);
+    })
+  );
+});
+
+var dataCacheName = 'weatherData-v1';
